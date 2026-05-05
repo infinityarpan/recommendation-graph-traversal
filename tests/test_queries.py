@@ -3,14 +3,14 @@ from unittest.mock import patch
 
 from tests.helpers import FakeSession
 
-import graph_traversal.queries as queries
+import app.queries as queries
 
 
 class QueryBehaviorTests(unittest.TestCase):
     def test_create_constraints_runs_expected_statements(self):
         session = FakeSession()
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             queries.create_constraints()
 
         self.assertTrue(session.closed)
@@ -23,7 +23,7 @@ class QueryBehaviorTests(unittest.TestCase):
     def test_seed_sample_data_merges_packages_by_id_only(self):
         session = FakeSession()
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             queries.seed_sample_data()
 
         self.assertTrue(session.closed)
@@ -35,7 +35,7 @@ class QueryBehaviorTests(unittest.TestCase):
     def test_seed_sample_data_uses_standard_action_schema(self):
         session = FakeSession()
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             queries.seed_sample_data()
 
         combined_query = "\n".join(query for query, _ in session.tx.calls)
@@ -47,7 +47,7 @@ class QueryBehaviorTests(unittest.TestCase):
     def test_recommend_similar_only_uses_positive_actions(self):
         session = FakeSession(records=[{"id": "pkg1"}])
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             queries.recommend_similar("u1", limit=3)
 
         query, params = session.tx.calls[0]
@@ -62,7 +62,7 @@ class QueryBehaviorTests(unittest.TestCase):
     def test_collaborative_recommendations_counts_distinct_packages(self):
         session = FakeSession(records=[{"id": "pkg1"}])
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             queries.collaborative_recommendations("u1", limit=2)
 
         query, _ = session.tx.calls[0]
@@ -71,7 +71,7 @@ class QueryBehaviorTests(unittest.TestCase):
     def test_regional_recommendations_return_distinct_packages(self):
         session = FakeSession(records=[{"id": "pkg1"}])
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             queries.regional_recommendations("u1", limit=2)
 
         query, _ = session.tx.calls[0]
@@ -81,7 +81,7 @@ class QueryBehaviorTests(unittest.TestCase):
     def test_trending_recommendations_are_deterministically_ordered(self):
         session = FakeSession(records=[{"id": "pkg1"}])
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             queries.trending_recommendations("u1", limit=2)
 
         query, _ = session.tx.calls[0]
@@ -91,7 +91,7 @@ class QueryBehaviorTests(unittest.TestCase):
     def test_database_errors_are_propagated_from_read_queries(self):
         session = FakeSession(error=RuntimeError("neo4j unavailable"))
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             with self.assertRaises(RuntimeError):
                 queries.recommend_similar("u1")
 
@@ -100,7 +100,7 @@ class QueryBehaviorTests(unittest.TestCase):
     def test_database_errors_are_propagated_from_write_queries(self):
         session = FakeSession(error=RuntimeError("neo4j unavailable"))
 
-        with patch("graph_traversal.queries.get_session", return_value=session):
+        with patch("app.queries.get_session", return_value=session):
             with self.assertRaises(RuntimeError):
                 queries.ingest_clickstream_data("u1", "viewed", "pkg1")
 

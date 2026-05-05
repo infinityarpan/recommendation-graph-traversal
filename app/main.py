@@ -18,14 +18,14 @@ async def lifespan(_: FastAPI):
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(
+    application = FastAPI(
         title="Travel Recommendation Service",
         version="3.0.0",
         description="Read-only FastAPI service for Neo4j-backed travel recommendations.",
         lifespan=lifespan,
     )
-    app.include_router(router)
-    return app
+    application.include_router(router)
+    return application
 
 
 app = create_app()

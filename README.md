@@ -6,18 +6,21 @@ Lean FastAPI service for Neo4j-backed travel recommendations. The service is rea
 
 ```text
 graph-traversal/
-|-- graph_traversal/
-|   |-- api.py
+|-- app/
 |   |-- config.py
 |   |-- database.py
+|   |-- main.py
 |   |-- queries.py
 |   |-- routes.py
 |   |-- schemas.py
 |   `-- services.py
+|-- scripts/
+|   `-- seed_graph.py
 |-- tests/
-|-- main.py
+|-- .dockerignore
+|-- docker-compose.yml
+|-- Dockerfile
 |-- requirements.txt
-|-- seed_graph.py
 `-- README.md
 ```
 
@@ -50,7 +53,7 @@ LOG_LEVEL=INFO
 ## Run The API
 
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 The API is intended for internal use and starts without authentication.
@@ -58,7 +61,7 @@ The API is intended for internal use and starts without authentication.
 ## Seed Local Sample Data
 
 ```bash
-python seed_graph.py
+python scripts/seed_graph.py
 ```
 
 The seed script is manual, repeatable, and non-destructive. It creates:
@@ -75,6 +78,36 @@ The seed script is manual, repeatable, and non-destructive. It creates:
   - `abandoned`
 
 Run the seed against an isolated or local Neo4j instance if you want predictable local test data.
+
+## Run With Docker
+
+```bash
+docker compose up --build
+```
+
+This flow will:
+
+- start Neo4j
+- wait for it to become healthy
+- run the seed script automatically
+- start the FastAPI service
+
+Default local ports:
+
+- API: `http://localhost:8001`
+- Neo4j Browser: `http://localhost:7474`
+- Neo4j Bolt: `bolt://localhost:7687`
+
+Default Neo4j credentials:
+
+- username: `neo4j`
+- password: `password`
+
+To stop everything:
+
+```bash
+docker compose down
+```
 
 ## API Endpoints
 

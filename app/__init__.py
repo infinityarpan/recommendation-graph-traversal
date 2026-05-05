@@ -15,7 +15,7 @@ from .queries import (
 )
 
 try:  # FastAPI is an application dependency, but query helpers stay importable without it.
-    from .api import app, create_app
+    from .main import app, create_app
 except ImportError:  # pragma: no cover - used only before app dependencies are installed.
     app = None
     create_app = None

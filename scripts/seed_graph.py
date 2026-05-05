@@ -1,8 +1,8 @@
 """Manual seed script for local Neo4j development."""
 
-from graph_traversal.config import configure_logging
-from graph_traversal.database import GraphDatabase_Connection
-from graph_traversal.queries import create_constraints, seed_sample_data
+from app.config import configure_logging
+from app.database import GraphDatabase_Connection
+from app.queries import create_constraints, seed_sample_data
 
 
 def main() -> None:
