@@ -2,7 +2,7 @@
 
 from app.config import configure_logging
 from app.database import GraphDatabase_Connection
-from app.queries import create_constraints, seed_sample_data
+from bootstrap.seed import create_constraints, seed_sample_data
 
 
 def main() -> None:
